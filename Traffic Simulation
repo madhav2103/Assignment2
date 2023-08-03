@@ -1,0 +1,84 @@
+import java.util.*;
+
+enum Direction {
+    NORTH, SOUTH, EAST, WEST
+}
+
+class Car {
+    String color;
+    Direction direction;
+
+    public Car(String color, Direction direction) {
+        this.color = color;
+        this.direction = direction;
+    }
+
+    @Override
+    public String toString() {
+        return color + " car driving " + direction;
+    }
+}
+
+public class TrafficSimulation {
+    private static final int TOTAL_CARS = 20;
+    private static final String[] CAR_COLORS = {"Red", "Green", "Blue", "Orange", "Pink"};
+    private static final Direction[] DIRECTIONS = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+
+    public static void main(String[] args) {
+        List<Car> cars = generateCars();
+
+        printCars(cars);
+
+        Map<String, Map<String, Integer>> report = generateReport(cars);
+        printReport(report);
+    }
+
+    private static List<Car> generateCars() {
+        List<Car> cars = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < TOTAL_CARS; i++) {
+            String color = CAR_COLORS[random.nextInt(CAR_COLORS.length)];
+            Direction direction = DIRECTIONS[random.nextInt(DIRECTIONS.length)];
+            Car car = new Car(color, direction);
+            cars.add(car);
+        }
+
+        return cars;
+    }
+
+    private static void printCars(List<Car> cars) {
+        System.out.println("Cars in the Traffic Simulation:");
+        for (Car car : cars) {
+            System.out.println(car);
+        }
+        System.out.println();
+    }
+
+    private static Map<String, Map<String, Integer>> generateReport(List<Car> cars) {
+        Map<String, Map<String, Integer>> report = new HashMap<>();
+
+        for (Car car : cars) {
+            String color = car.color;
+            String direction = car.direction.toString();
+
+            report.putIfAbsent(color, new HashMap<>());
+            Map<String, Integer> colorDirectionCount = report.get(color);
+            colorDirectionCount.put(direction, colorDirectionCount.getOrDefault(direction, 0) + 1);
+        }
+
+        return report;
+    }
+
+    private static void printReport(Map<String, Map<String, Integer>> report) {
+        System.out.println("Traffic Report - Cars by Color and Direction:");
+        for (String color : report.keySet()) {
+            Map<String, Integer> colorDirectionCount = report.get(color);
+            System.out.println("Color: " + color);
+            for (String direction : colorDirectionCount.keySet()) {
+                int count = colorDirectionCount.get(direction);
+                System.out.println("\tDirection: " + direction + ", Count: " + count);
+            }
+        }
+    }
+}
