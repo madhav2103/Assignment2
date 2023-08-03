@@ -1,0 +1,70 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class GuessingGame extends JFrame {
+    private static final int MAX_ATTEMPTS = 10;
+    private int randomNumber;
+    private int attemptsLeft;
+
+    private JTextField guessField;
+    private JLabel resultLabel;
+
+    public GuessingGame() {
+        setTitle("Guessing Game");
+        setSize(300, 150);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        randomNumber = generateRandomNumber();
+        attemptsLeft = MAX_ATTEMPTS;
+
+        JLabel promptLabel = new JLabel("Guess a number between 1 and 100:");
+        guessField = new JTextField(10);
+        guessField.addActionListener(new GuessListener());
+
+        JButton guessButton = new JButton("Guess");
+        guessButton.addActionListener(new GuessListener());
+
+        resultLabel = new JLabel("You have " + attemptsLeft + " attempts left.");
+
+        setLayout(new FlowLayout());
+        add(promptLabel);
+        add(guessField);
+        add(guessButton);
+        add(resultLabel);
+    }
+
+    private int generateRandomNumber() {
+        return (int) (Math.random() * 100) + 1;
+    }
+
+    private class GuessListener implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            int guess = Integer.parseInt(guessField.getText());
+            attemptsLeft--;
+
+            if (guess == randomNumber) {
+                resultLabel.setText("Congratulations! You guessed the correct number.");
+                guessField.setEditable(false);
+            } else if (attemptsLeft == 0) {
+                resultLabel.setText("Sorry, you are out of attempts. The number was " + randomNumber + ".");
+                guessField.setEditable(false);
+            } else if (guess < randomNumber) {
+                resultLabel.setText("Try a higher number. You have " + attemptsLeft + " attempts left.");
+            } else {
+                resultLabel.setText("Try a lower number. You have " + attemptsLeft + " attempts left.");
+            }
+
+            guessField.setText("");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            GuessingGame game = new GuessingGame();
+            game.setVisible(true);
+        });
+    }
+}
